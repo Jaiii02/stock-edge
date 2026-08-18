@@ -44,20 +44,20 @@ Add later:
 
 ## Day 1 — Create a safe checkpoint
 
-- [ ] Create the first Git commit.
-- [ ] Add a proper root `.gitignore`.
-- [ ] Ignore `backend/venv`, `__pycache__`, `*.pyc`, `node_modules`, `dist`, and `.env` files.
-- [ ] Write down the commands required to run the frontend and backend.
-- [ ] Confirm the current application still loads before making changes.
+- [x] Create the first Git commit.
+- [x] Add a proper root `.gitignore`.
+- [x] Ignore `backend/venv`, `__pycache__`, `*.pyc`, `node_modules`, `dist`, and `.env` files.
+- [x] Write down the commands required to run the frontend and backend.
+- [x] Confirm the current application still loads before making changes.
 
 ## Day 2 — Define the first product version
 
-- [ ] Define the target user: long-term Indian-equity investor.
-- [ ] Define what each recommendation means.
-- [ ] Decide how fresh financial data must be.
-- [ ] Decide what happens when data is missing or stale.
-- [ ] Define the first promise: analyze a supported NSE stock, compare it with peers, and explain the result.
-- [ ] Avoid promising perfect investment advice.
+- [x] Define the target user: long-term Indian-equity investor.
+- [x] Define what each recommendation means.
+- [x] Decide how fresh financial data must be.
+- [x] Decide what happens when data is missing or stale.
+- [x] Define the first promise: analyze a supported NSE stock, compare it with peers, and explain the result.
+- [x] Avoid promising perfect investment advice.
 
 ## Days 3–4 — Clean up the backend structure
 
