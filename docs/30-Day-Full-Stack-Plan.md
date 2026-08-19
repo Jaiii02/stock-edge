@@ -74,11 +74,11 @@ backend/app/
 └── providers/
 ```
 
-- [ ] Add proper Python package files and stable imports.
-- [ ] Move route definitions into API modules.
-- [ ] Move configuration into `core/config.py`.
-- [ ] Keep financial calculations intact while moving files.
-- [ ] Verify the backend after each structural change.
+- [x] Add proper Python package files and stable imports.
+- [x] Move route definitions into API modules.
+- [x] Move configuration into `core/config.py`.
+- [x] Keep financial calculations intact while moving files.
+- [x] Verify the backend after each structural change.
 
 ## Days 5–7 — Add PostgreSQL and import the CSV
 

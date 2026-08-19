@@ -1,14 +1,13 @@
-import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from analyzer import analyze_stock
-from app.core.config import DATA_PATH, FRONTEND_ORIGINS
+from app.core.config import FRONTEND_ORIGINS
+from app.api.routes_analysis import router as analysis_router
+from app.api.routes_health import router as health_router
+from app.api.routes_stocks import router as stocks_router
 
 
 app = FastAPI()
-
-df = pd.read_csv(DATA_PATH)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,17 +17,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-def home():
-    return {"message": "StockEdge API is running!"}
-
-
-@app.get("/symbols")
-def get_symbols():
-    return df["Symbol"].tolist()
-
-
-@app.get("/analyze/{symbol}")
-def analyze(symbol: str):
-    return analyze_stock(symbol.upper())
+app.include_router(health_router)
+app.include_router(stocks_router)
+app.include_router(analysis_router)
