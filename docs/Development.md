@@ -15,7 +15,7 @@ Open a PowerShell terminal and run:
 
 ```powershell
 Set-Location "C:\Users\Jai\OneDrive\Desktop\Stock-edge\backend"
-.\venv\Scripts\python.exe -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+.\venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 The backend API is available at:
@@ -23,7 +23,7 @@ The backend API is available at:
 - `http://localhost:8000/`
 - `http://localhost:8000/docs` for FastAPI's interactive API documentation
 
-The backend must be started from the `backend` directory because the current code loads the CSV using a relative path.
+The backend command should be started from the `backend` directory. The old `main:app` entry point remains as a compatibility wrapper, but new development commands should use `app.main:app`.
 
 ## Start the frontend
 

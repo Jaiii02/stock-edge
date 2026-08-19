@@ -1,0 +1,1 @@
+"""StockEdge backend application package."""
