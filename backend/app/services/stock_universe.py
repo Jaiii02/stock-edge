@@ -1,11 +1,12 @@
-import pandas as pd
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from app.core.config import DATA_PATH
-
-
-_companies = pd.read_csv(DATA_PATH)
+from app.core.database import engine
+from app.db.models import Stock
 
 
 def get_symbols() -> list[str]:
-    """Return the symbols currently in the local supported universe."""
-    return _companies["Symbol"].tolist()
+    """Return stock symbols stored in PostgreSQL."""
+    with Session(engine) as session:
+        query = select(Stock.symbol).order_by(Stock.symbol)
+        return list(session.scalars(query))
