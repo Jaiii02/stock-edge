@@ -1,6 +1,7 @@
 import os
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
 
 
 # Read the connection string from the environment when one is provided.
@@ -14,3 +15,13 @@ engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
 )
+
+
+def check_database() -> bool:
+    """Return whether PostgreSQL responds to a lightweight query."""
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        return True
+    except SQLAlchemyError:
+        return False
