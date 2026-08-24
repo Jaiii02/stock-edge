@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import DATA_PATH
 from app.core.database import engine
-from app.db.models import Stock
+from app.db.models import Company, Industry
 
 
 def seed_stocks() -> int:
@@ -14,10 +14,8 @@ def seed_stocks() -> int:
         rows = list(csv.DictReader(csv_file))
 
     with Session(engine) as session:
-        existing = {
-            stock.symbol: stock
-            for stock in session.scalars(select(Stock))
-        }
+        industries = {item.name: item for item in session.scalars(select(Industry))}
+        companies = {item.symbol: item for item in session.scalars(select(Company))}
 
         new_stocks = []
         for row in rows:
@@ -25,15 +23,22 @@ def seed_stocks() -> int:
             company_name = row["Company Name"].strip()
             industry = row["Industry"].strip()
 
-            if symbol in existing:
-                existing[symbol].company_name = company_name
-                existing[symbol].industry = industry
+            industry_record = industries.get(industry)
+            if industry_record is None:
+                industry_record = Industry(name=industry)
+                session.add(industry_record)
+                session.flush()
+                industries[industry] = industry_record
+
+            if symbol in companies:
+                companies[symbol].company_name = company_name
+                companies[symbol].industry_id = industry_record.id
             else:
                 new_stocks.append(
-                    Stock(
+                    Company(
                         symbol=symbol,
                         company_name=company_name,
-                        industry=industry,
+                        industry_id=industry_record.id,
                     )
                 )
 
