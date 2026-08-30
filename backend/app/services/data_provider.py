@@ -1,10 +1,45 @@
+import logging
+import time
+from typing import Any
+
 import yfinance as yf
 
-def get_stock_info(symbol: str):
-    """
-    Fetch raw Yahoo Finance info.
-    """
+logger = logging.getLogger(__name__)
 
-    stock = yf.Ticker(f"{symbol}.NS")
 
-    return stock.info
+class MarketDataProvider:
+    """Interface-like base class for providers of market data."""
+
+    def get_stock_info(self, symbol: str) -> dict[str, Any]:
+        raise NotImplementedError
+
+
+class YahooFinanceProvider(MarketDataProvider):
+    """Fetch company information from Yahoo Finance with limited retries."""
+
+    def __init__(self, max_attempts: int = 3, retry_delay_seconds: float = 1.0):
+        self.max_attempts = max_attempts
+        self.retry_delay_seconds = retry_delay_seconds
+
+    def get_stock_info(self, symbol: str) -> dict[str, Any]:
+        ticker_symbol = f"{symbol.upper()}.NS"
+        for attempt in range(1, self.max_attempts + 1):
+            try:
+                logger.info("Fetching market data for %s (attempt %d/%d)", ticker_symbol, attempt, self.max_attempts)
+                info = yf.Ticker(ticker_symbol).info
+                if not isinstance(info, dict):
+                    raise ValueError("Yahoo Finance returned an invalid response")
+                return info
+            except Exception:
+                logger.warning("Market-data request failed for %s (attempt %d/%d)", ticker_symbol, attempt, self.max_attempts, exc_info=True)
+                if attempt == self.max_attempts:
+                    raise
+                time.sleep(self.retry_delay_seconds)
+
+
+provider = YahooFinanceProvider()
+
+
+def get_stock_info(symbol: str) -> dict[str, Any]:
+    """Backward-compatible function used by the analysis pipeline."""
+    return provider.get_stock_info(symbol)
