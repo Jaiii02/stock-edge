@@ -20,3 +20,9 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(stocks_router)
 app.include_router(analysis_router)
+
+# Versioned contract for new clients. The original routes remain available
+# temporarily so the current frontend continues to work during migration.
+app.include_router(health_router, prefix="/api/v1")
+app.include_router(stocks_router, prefix="/api/v1")
+app.include_router(analysis_router, prefix="/api/v1")
