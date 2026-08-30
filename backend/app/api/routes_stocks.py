@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.services.stock_universe import get_symbols
 from app.schemas.stocks import StockResponse
-from services.peer_engine import get_stock_info
+from app.services.peer_engine import get_stock_info
 
 
 router = APIRouter(tags=["stocks"])

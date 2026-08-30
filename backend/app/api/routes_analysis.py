@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from analyzer import analyze_stock
+from app.services.analyzer import analyze_stock
 from app.schemas.analysis import AnalysisResponse
 
 

@@ -1,9 +1,9 @@
 import pandas as pd
 
-from services.peer_engine import get_peers
-from services.data_provider import get_stock_info
+from app.services.peer_engine import get_peers
+from app.services.data_provider import get_stock_info
 
-from services.business_quality import (
+from app.services.business_quality import (
     get_business_metrics,
     calculate_derived_metrics as calculate_business_metrics,
     normalize_metrics as normalize_business_metrics,
@@ -11,7 +11,7 @@ from services.business_quality import (
     explain_business_quality,
 )
 
-from services.valuation import (
+from app.services.valuation import (
     get_valuation_metrics,
     calculate_derived_metrics as calculate_valuation_metrics,
     normalize_metrics as normalize_valuation_metrics,
@@ -19,7 +19,7 @@ from services.valuation import (
     explain_valuation,
 )
 
-from services.recommendation import generate_summary
+from app.services.recommendation import generate_summary
 
 
 def analyze_stock(symbol: str):
