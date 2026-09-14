@@ -51,7 +51,9 @@ def normalize_metrics(df: pd.DataFrame):
         )
 
     for metric in VALUATION_LOWER_IS_BETTER:
-        valid = df[metric].notna()
+        # Negative valuation multiples usually mean negative earnings or
+        # another unsuitable denominator, so they are not comparable.
+        valid = df[metric].notna() & (df[metric] > 0)
         df.loc[valid, f"{metric}_score"] = (
             df.loc[valid, metric]
             .rank(pct=True, ascending=False)
@@ -66,7 +68,7 @@ def calculate_valuation_score(df: pd.DataFrame):
 
     """
 
-    score_columns = VALUATION_SCORE_COLUMNS
+    score_columns = list(VALUATION_SCORE_COLUMNS)
 
     # Number of metrics available
     df["metrics_used"] = df[score_columns].count(axis=1)
@@ -84,6 +86,7 @@ def calculate_valuation_score(df: pd.DataFrame):
     df["valuation_score"] = (
         df[score_columns]
         .mean(axis=1, skipna=True)
+        .fillna(0)
     )
 
     return df
@@ -139,10 +142,10 @@ def explain_valuation(row):
 
     return {
         "metrics": {
-            "pe": None if pd.isna(row["pe"]) else round(row["pe"], 2),
-            "forward_pe": None if pd.isna(row["forward_pe"]) else round(row["forward_pe"], 2),
-            "ev_ebitda": None if pd.isna(row["ev_ebitda"]) else round(row["ev_ebitda"], 2),
-            "price_to_book": None if pd.isna(row["price_to_book"]) else round(row["price_to_book"], 2),
+            "pe": None if pd.isna(row["pe"]) or row["pe"] <= 0 else round(row["pe"], 2),
+            "forward_pe": None if pd.isna(row["forward_pe"]) or row["forward_pe"] <= 0 else round(row["forward_pe"], 2),
+            "ev_ebitda": None if pd.isna(row["ev_ebitda"]) or row["ev_ebitda"] <= 0 else round(row["ev_ebitda"], 2),
+            "price_to_book": None if pd.isna(row["price_to_book"]) or row["price_to_book"] <= 0 else round(row["price_to_book"], 2),
             "fcf_yield": None if pd.isna(row["fcf_yield"]) else round(row["fcf_yield"] * 100, 2),
             "peg": None if pd.isna(row["peg"]) else round(row["peg"], 2),
         },
