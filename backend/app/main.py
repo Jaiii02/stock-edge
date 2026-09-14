@@ -2,11 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import FRONTEND_ORIGINS
+from app.core.logging_config import configure_logging
 from app.api.routes_analysis import router as analysis_router
 from app.api.routes_health import router as health_router
 from app.api.routes_stocks import router as stocks_router
 
 
+configure_logging()
 app = FastAPI()
 
 app.add_middleware(
