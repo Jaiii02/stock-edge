@@ -18,6 +18,12 @@ Not Responsible For:
 import yfinance as yf
 import pandas as pd
 
+from app.services.scoring_config import (
+    BUSINESS_HIGHER_IS_BETTER,
+    BUSINESS_LOWER_IS_BETTER,
+    BUSINESS_WEIGHTS,
+)
+
 def get_business_metrics(info : dict) :
     """
     Fetch raw business quality metrics from Yahoo Finance.
@@ -82,27 +88,14 @@ def normalize_metrics(df: pd.DataFrame):
 
     """
 
-    higher_is_better = [
-        "roe",
-        "revenue_growth",
-        "earnings_growth",
-        "gross_margin",
-        "operating_margin",
-        "fcf_conversion",
-    ]
-
-    lower_is_better = [
-        "net_debt_ebitda",
-    ]
-
-    for metric in higher_is_better:
+    for metric in BUSINESS_HIGHER_IS_BETTER:
         valid = df[metric].notna()
         df.loc[valid, f"{metric}_score"] = (
             df.loc[valid, metric]
             .rank(pct=True)
         )
 
-    for metric in lower_is_better:
+    for metric in BUSINESS_LOWER_IS_BETTER:
         valid = df[metric].notna()
         df.loc[valid, f"{metric}_score"] = (
             df.loc[valid, metric]
@@ -120,15 +113,7 @@ def calculate_business_quality(df: pd.DataFrame):
     """
 
     # Metric weights
-    weights = {
-        "roe_score": 0.20,
-        "revenue_growth_score": 0.20,
-        "earnings_growth_score": 0.20,
-        "operating_margin_score": 0.15,
-        "gross_margin_score": 0.10,
-        "fcf_conversion_score": 0.10,
-        "net_debt_ebitda_score": 0.05,
-    }
+    weights = BUSINESS_WEIGHTS
 
     score_columns = weights.keys()
 

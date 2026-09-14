@@ -1,6 +1,12 @@
 import pandas as pd
 import yfinance as yf
 
+from app.services.scoring_config import (
+    VALUATION_HIGHER_IS_BETTER,
+    VALUATION_LOWER_IS_BETTER,
+    VALUATION_SCORE_COLUMNS,
+)
+
 STRENGTH_THRESHOLD = 0.80
 WEAKNESS_THRESHOLD = 0.30
 
@@ -37,26 +43,14 @@ def normalize_metrics(df: pd.DataFrame):
 
     """
 
-    higher_is_better = [
-        "fcf_yield"
-    ]
-
-    lower_is_better = [
-        "pe",
-        "forward_pe",
-        "ev_ebitda",
-        "peg",
-        "price_to_book",
-    ]
-
-    for metric in higher_is_better:
+    for metric in VALUATION_HIGHER_IS_BETTER:
         valid = df[metric].notna()
         df.loc[valid, f"{metric}_score"] = (
             df.loc[valid, metric]
             .rank(pct=True)
         )
 
-    for metric in lower_is_better:
+    for metric in VALUATION_LOWER_IS_BETTER:
         valid = df[metric].notna()
         df.loc[valid, f"{metric}_score"] = (
             df.loc[valid, metric]
@@ -72,14 +66,7 @@ def calculate_valuation_score(df: pd.DataFrame):
 
     """
 
-    score_columns = [
-        "pe_score",
-        "forward_pe_score",
-        "ev_ebitda_score",
-        "peg_score",
-        "price_to_book_score",
-        "fcf_yield_score",
-    ]
+    score_columns = VALUATION_SCORE_COLUMNS
 
     # Number of metrics available
     df["metrics_used"] = df[score_columns].count(axis=1)
