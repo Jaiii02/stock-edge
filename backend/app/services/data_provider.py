@@ -67,12 +67,21 @@ class YahooFinanceProvider(MarketDataProvider):
             return snapshot.payload if snapshot is not None else None
 
     def _save_snapshot(self, symbol: str, info: dict[str, Any]) -> None:
+        as_of_date = None
+        most_recent_quarter = info.get("mostRecentQuarter")
+        if isinstance(most_recent_quarter, (int, float)):
+            as_of_date = datetime.fromtimestamp(
+                most_recent_quarter,
+                tz=timezone.utc,
+            ).date()
+
         with Session(engine) as session:
             session.add(
                 MarketDataSnapshot(
                     symbol=symbol,
                     source="yahoo_finance",
                     fetched_at=datetime.now(timezone.utc),
+                    as_of_date=as_of_date,
                     payload=info,
                 )
             )
