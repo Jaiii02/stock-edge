@@ -4,6 +4,8 @@ from typing import Any
 
 import yfinance as yf
 
+from app.services.provider_errors import MarketDataUnavailableError
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,10 +32,12 @@ class YahooFinanceProvider(MarketDataProvider):
                 if not isinstance(info, dict):
                     raise ValueError("Yahoo Finance returned an invalid response")
                 return info
-            except Exception:
+            except Exception as exc:
                 logger.warning("Market-data request failed for %s (attempt %d/%d)", ticker_symbol, attempt, self.max_attempts, exc_info=True)
                 if attempt == self.max_attempts:
-                    raise
+                    raise MarketDataUnavailableError(
+                        f"Yahoo Finance unavailable for {ticker_symbol}"
+                    ) from exc
                 time.sleep(self.retry_delay_seconds)
 
 
