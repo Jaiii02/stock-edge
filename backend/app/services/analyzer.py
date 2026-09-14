@@ -20,6 +20,7 @@ from app.services.valuation import (
 )
 
 from app.services.recommendation import generate_summary
+from app.services.scoring_config import MIN_COMPARISON_PEERS
 
 
 def analyze_stock(symbol: str):
@@ -91,6 +92,11 @@ def analyze_stock(symbol: str):
     ].iloc[0]
 
     valuation_result = explain_valuation(valuation_row)
+
+    if peer_info["peer_count"] < MIN_COMPARISON_PEERS:
+        for result in (business_result, valuation_result):
+            result["confidence"] = 0.0
+            result["confidence_level"] = "Insufficient Data"
 
     # -----------------------------
     # Final Recommendation

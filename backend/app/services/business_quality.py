@@ -22,6 +22,9 @@ from app.services.scoring_config import (
     BUSINESS_HIGHER_IS_BETTER,
     BUSINESS_LOWER_IS_BETTER,
     BUSINESS_WEIGHTS,
+    MIN_COMPARISON_PEERS,
+    OUTLIER_LOWER_QUANTILE,
+    OUTLIER_UPPER_QUANTILE,
 )
 
 def get_business_metrics(info : dict) :
@@ -90,16 +93,22 @@ def normalize_metrics(df: pd.DataFrame):
 
     for metric in BUSINESS_HIGHER_IS_BETTER:
         valid = df[metric].notna()
+        if len(df) < MIN_COMPARISON_PEERS + 1:
+            df[f"{metric}_score"] = pd.NA
+            continue
+        values = df.loc[valid, metric].clip(lower=df.loc[valid, metric].quantile(OUTLIER_LOWER_QUANTILE), upper=df.loc[valid, metric].quantile(OUTLIER_UPPER_QUANTILE))
         df.loc[valid, f"{metric}_score"] = (
-            df.loc[valid, metric]
-            .rank(pct=True)
+            values.rank(pct=True)
         )
 
     for metric in BUSINESS_LOWER_IS_BETTER:
         valid = df[metric].notna()
+        if len(df) < MIN_COMPARISON_PEERS + 1:
+            df[f"{metric}_score"] = pd.NA
+            continue
+        values = df.loc[valid, metric].clip(lower=df.loc[valid, metric].quantile(OUTLIER_LOWER_QUANTILE), upper=df.loc[valid, metric].quantile(OUTLIER_UPPER_QUANTILE))
         df.loc[valid, f"{metric}_score"] = (
-            df.loc[valid, metric]
-            .rank(pct=True, ascending=False)
+            values.rank(pct=True, ascending=False)
         )
 
     return df
