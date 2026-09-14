@@ -44,3 +44,9 @@ SCORING_MODEL_VERSION = "business-quality-v1"
 MIN_COMPARISON_PEERS = 2
 OUTLIER_LOWER_QUANTILE = 0.05
 OUTLIER_UPPER_QUANTILE = 0.95
+
+
+def validate_scoring_config() -> None:
+    """Fail early if scoring configuration becomes internally inconsistent."""
+    if abs(sum(BUSINESS_WEIGHTS.values()) - 1.0) > 1e-9:
+        raise ValueError("Business scoring weights must sum to 1.0")

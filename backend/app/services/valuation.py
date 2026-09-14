@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 import yfinance as yf
 
@@ -35,7 +37,9 @@ def calculate_derived_metrics(metrics: dict):
     metrics["fcf_yield"] = None
 
     if (metrics["enterprise_value"] not in (None, 0)) and (metrics["free_cash_flow"] is not None) :
-        metrics["fcf_yield"] = (metrics["free_cash_flow"])/(metrics["enterprise_value"])
+        candidate = (metrics["free_cash_flow"])/(metrics["enterprise_value"])
+        if math.isfinite(candidate):
+            metrics["fcf_yield"] = candidate
 
     return metrics
 

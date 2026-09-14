@@ -21,6 +21,7 @@ from app.services.valuation import (
 
 from app.services.recommendation import generate_summary
 from app.services.scoring_config import MIN_COMPARISON_PEERS
+from app.services.scoring_config import validate_scoring_config
 
 
 def analyze_stock(symbol: str):
@@ -28,6 +29,8 @@ def analyze_stock(symbol: str):
     Complete StockEdge analysis pipeline.
 
     """
+
+    validate_scoring_config()
 
     # -----------------------------
     # Get Peer Universe

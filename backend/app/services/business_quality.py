@@ -16,6 +16,8 @@ Not Responsible For:
 """
 
 import yfinance as yf
+import math
+
 import pandas as pd
 
 from app.services.scoring_config import (
@@ -64,9 +66,11 @@ def calculate_derived_metrics(metrics: dict):
         metrics["free_cash_flow"] is not None
         and metrics["net_income"] not in (None, 0)
     ):
-        fcf_conversion = (
+        candidate = (
             metrics["free_cash_flow"] / metrics["net_income"]
         )
+        if math.isfinite(candidate):
+            fcf_conversion = candidate
 
     # Net Debt / EBITDA = (Total Debt - Total Cash) / EBITDA
     if (
@@ -74,10 +78,12 @@ def calculate_derived_metrics(metrics: dict):
         and metrics["total_cash"] is not None
         and metrics["ebitda"] not in (None, 0)
     ):
-        net_debt_ebitda = (
+        candidate = (
             (metrics["total_debt"] - metrics["total_cash"])
             / metrics["ebitda"]
         )
+        if math.isfinite(candidate):
+            net_debt_ebitda = candidate
 
     metrics["fcf_conversion"] = fcf_conversion
     metrics["net_debt_ebitda"] = net_debt_ebitda

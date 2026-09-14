@@ -141,8 +141,13 @@ def generate_summary(
         + valuation["weaknesses"]
     )
 
+    warnings = []
+    if overall_confidence["level"] == "Insufficient Data":
+        warnings.append("Recommendation confidence is limited by missing or insufficient comparison data.")
+
     return {
     "symbol": symbol,
+    "scoring_model_version": SCORING_MODEL_VERSION,
 
     "overall_score": overall_score,
 
@@ -167,4 +172,6 @@ def generate_summary(
     "strengths": strengths,
 
     "weaknesses": weaknesses,
+    "warnings": warnings,
     }
+from app.services.scoring_config import SCORING_MODEL_VERSION
