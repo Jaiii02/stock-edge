@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getStockAnalysis, getSymbols } from "../api/client";
 
 function SearchBar({ setAnalysis }) {
 
@@ -12,13 +13,7 @@ function SearchBar({ setAnalysis }) {
         async function loadSymbols() {
 
             try {
-                const response = await fetch(
-                    "http://localhost:8000/symbols"
-                );
-
-                const data = await response.json();
-
-                setSymbols(data);
+                setSymbols(await getSymbols());
             }
             catch (error) {
                 console.error(error);
@@ -44,13 +39,7 @@ function SearchBar({ setAnalysis }) {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                `http://localhost:8000/analyze/${finalSymbol}`
-            );
-
-            const data = await response.json();
-
-            setAnalysis(data);
+            setAnalysis(await getStockAnalysis(finalSymbol));
         }
         catch (error) {
             console.error(error);
