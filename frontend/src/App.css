@@ -104,6 +104,15 @@ body {
   color: #ef4444;
 }
 
+.error-message {
+  background: #451a1a;
+  border: 1px solid #ef4444;
+  color: #fecaca;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
 input {
   width: 100%;
   padding: 16px;

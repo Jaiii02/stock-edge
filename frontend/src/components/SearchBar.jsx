@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getStockAnalysis, getSymbols } from "../api/client";
 
-function SearchBar({ setAnalysis }) {
+function SearchBar({ setAnalysis, setStatus, setError }) {
 
     const [symbol, setSymbol] = useState("");
     const [loading, setLoading] = useState(false);
@@ -37,16 +37,25 @@ function SearchBar({ setAnalysis }) {
         setShowSuggestions(false);
 
         setLoading(true);
+        setStatus("loading");
+        setError(null);
 
         try {
-            setAnalysis(await getStockAnalysis(finalSymbol));
+            const result = await getStockAnalysis(finalSymbol);
+            setAnalysis(result);
+            setStatus("success");
         }
         catch (error) {
             console.error(error);
-
-            setAnalysis({
-                error: "Failed to connect to server."
-            });
+            setAnalysis(null);
+            setStatus("error");
+            setError(
+                error.status === 404
+                    ? "Stock not found."
+                    : error.status === 503
+                    ? "Market data is temporarily unavailable."
+                    : "Failed to connect to the server."
+            );
         }
         finally {
             setLoading(false);
