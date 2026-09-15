@@ -14,3 +14,4 @@ class AnalysisResponse(BaseModel):
     strengths: list[str]
     weaknesses: list[str]
     warnings: list[str]
+    explanations: list[dict[str, Any]]

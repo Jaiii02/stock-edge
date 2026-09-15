@@ -52,6 +52,18 @@ function Analysis({ analysis }) {
                 </div>
             )}
 
+            {analysis.explanations?.length > 0 && (
+                <div className="section">
+                    <h2>Why this score?</h2>
+                    {analysis.explanations.map((item) => (
+                        <div className="metric" key={item.metric}>
+                            <span>{labels[item.metric] || item.metric}: {item.value ?? "NA"}</span>
+                            <span>{item.peer_percentile}th percentile · {item.effect}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <div className="cards">
                 <MetricsCard title="Business Quality" section={analysis.business_quality} />
                 <MetricsCard title="Valuation" section={analysis.valuation} />

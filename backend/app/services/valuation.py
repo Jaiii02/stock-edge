@@ -114,6 +114,7 @@ def explain_valuation(row):
 
     strengths = []
     weaknesses = []
+    explanations = []
 
     metric_descriptions = {
         "pe": ("Attractive P/E", "Expensive P/E"),
@@ -131,6 +132,13 @@ def explain_valuation(row):
 
         if pd.isna(score):
             continue
+
+        explanations.append({
+            "metric": metric,
+            "value": None if pd.isna(row[metric]) else round(float(row[metric]), 4),
+            "peer_percentile": round(float(score) * 100, 1),
+            "effect": "positive" if score >= 0.5 else "negative",
+        })
 
         if score >= STRENGTH_THRESHOLD:
             strengths.append(good_msg)
@@ -169,4 +177,5 @@ def explain_valuation(row):
         "metrics_total": int(row["metrics_total"]),
         "strengths": strengths,
         "weaknesses": weaknesses,
+        "explanations": explanations,
     }

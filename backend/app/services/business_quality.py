@@ -176,6 +176,7 @@ def explain_business_quality(row):
 
     strengths = []
     weaknesses = []
+    explanations = []
 
     metric_descriptions = {
         "roe": ("Excellent ROE", "Weak ROE"),
@@ -194,6 +195,13 @@ def explain_business_quality(row):
 
         if pd.isna(score):
             continue
+
+        explanations.append({
+            "metric": metric,
+            "value": None if pd.isna(row[metric]) else round(row[metric] * 100, 2),
+            "peer_percentile": round(float(score) * 100, 1),
+            "effect": "positive" if score >= 0.5 else "negative",
+        })
 
         if score >= STRENGTH_THRESHOLD:
             strengths.append(good_msg)
@@ -233,6 +241,7 @@ def explain_business_quality(row):
         "metrics_total": int(row["metrics_total"]),
         "strengths": strengths,
         "weaknesses": weaknesses,
+        "explanations": explanations,
     }
 
 

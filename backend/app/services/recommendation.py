@@ -141,6 +141,11 @@ def generate_summary(
         + valuation["weaknesses"]
     )
 
+    explanations = (
+        business_quality.get("explanations", [])
+        + valuation.get("explanations", [])
+    )
+
     warnings = []
     if overall_confidence["level"] == "Insufficient Data":
         warnings.append("Recommendation confidence is limited by missing or insufficient comparison data.")
@@ -173,5 +178,6 @@ def generate_summary(
 
     "weaknesses": weaknesses,
     "warnings": warnings,
+    "explanations": explanations,
     }
 from app.services.scoring_config import SCORING_MODEL_VERSION
