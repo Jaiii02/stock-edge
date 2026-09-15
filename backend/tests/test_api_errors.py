@@ -33,3 +33,31 @@ def test_analysis_route_returns_503_for_provider_failure(monkeypatch):
         routes_analysis.analyze("TCS")
 
     assert error.value.status_code == 503
+
+
+def test_successful_stock_lookup_returns_response(monkeypatch):
+    monkeypatch.setattr(
+        routes_stocks,
+        "get_stock_info",
+        lambda symbol: {"symbol": symbol, "company_name": "Example Ltd", "industry": "Technology"},
+    )
+
+    assert routes_stocks.stock("tcs")["symbol"] == "TCS"
+
+
+def test_successful_analysis_returns_result(monkeypatch):
+    result = {
+        "symbol": "TCS",
+        "scoring_model_version": "business-quality-v1",
+        "overall_score": 7.5,
+        "recommendation": "Buy",
+        "overall_confidence": {"score": 90, "level": "High"},
+        "business_quality": {},
+        "valuation": {},
+        "strengths": [],
+        "weaknesses": [],
+        "warnings": [],
+    }
+    monkeypatch.setattr(routes_analysis, "analyze_stock", lambda _: result)
+
+    assert routes_analysis.analyze("tcs")["recommendation"] == "Buy"

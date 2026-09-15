@@ -32,14 +32,9 @@ def test_valuation_derived_metrics_handle_zero_denominator():
     assert result["fcf_yield"] is None
 
 
-def test_negative_pe_is_excluded_from_valuation_score():
-    frame = pd.DataFrame(
-        [
-            {"pe": -5, "forward_pe": 10, "ev_ebitda": 8, "peg": 1, "price_to_book": 2, "fcf_yield": 0.1},
-            {"pe": 15, "forward_pe": 12, "ev_ebitda": 10, "peg": 2, "price_to_book": 3, "fcf_yield": 0.05},
-            {"pe": 20, "forward_pe": 18, "ev_ebitda": 12, "peg": 3, "price_to_book": 4, "fcf_yield": 0.02},
-        ]
-    )
+def test_negative_pe_is_excluded_from_valuation_score(valuation_rows):
+    valuation_rows[0]["pe"] = -5
+    frame = pd.DataFrame(valuation_rows)
 
     scored = calculate_valuation_score(normalize_metrics(frame))
 

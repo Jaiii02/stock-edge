@@ -46,3 +46,18 @@ def test_provider_raises_custom_error_after_final_failure(monkeypatch):
 
     with pytest.raises(MarketDataUnavailableError):
         provider.get_stock_info("tcs")
+
+
+def test_expired_cache_falls_back_to_provider(monkeypatch):
+    responses = [{"trailingPE": 15}]
+    monkeypatch.setattr("app.services.data_provider.yf.Ticker", lambda symbol: FakeTicker(symbol, responses))
+    monkeypatch.setattr("app.services.data_provider.time.sleep", lambda _: None)
+    provider = YahooFinanceProvider()
+    monkeypatch.setattr(provider, "_get_recent_snapshot", lambda _: None)
+    saved = []
+    monkeypatch.setattr(provider, "_save_snapshot", lambda symbol, info: saved.append((symbol, info)))
+
+    result = provider.get_stock_info("tcs")
+
+    assert result["trailingPE"] == 15
+    assert saved == [("TCS", result)]
